@@ -5,7 +5,12 @@
 */
 
 function isAnagram(str1, str2) {
-
+  const str1Array = [...(str1.toLowerCase())].sort(); 
+  const str2Array = [...(str2.toLowerCase())].sort();
+  if (JSON.stringify(str1Array) === JSON.stringify(str2Array)) {
+    return true;
+  }
+  return false;
 }
 
 module.exports = isAnagram;
