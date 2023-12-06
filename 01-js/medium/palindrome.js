@@ -4,7 +4,13 @@
 */
 
 function isPalindrome(str) {
-  return true;
+  const cleanStr = str.replace(/[.,\/#!$%\^&\*;:{}=\-_`~() \[\]\\@"'<>?]/g,"");
+  const strArray = [...(cleanStr.toLowerCase())];
+  const revStrArray = [...strArray].reverse();
+  if (JSON.stringify(strArray) === JSON.stringify(revStrArray)) {
+    return true;
+  }
+  return false;
 }
 
 module.exports = isPalindrome;
