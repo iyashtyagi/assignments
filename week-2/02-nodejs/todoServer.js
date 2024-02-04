@@ -38,12 +38,186 @@
     - For any other route not defined in the server return 404
 
   Testing the server - run `npm run test-todoServer` command in terminal
- */
-  const express = require('express');
-  const bodyParser = require('body-parser');
+*/
+const express = require('express');
+const bodyParser = require('body-parser');
+const fs = require('fs');
+const path = require('path');
+// const port = 3000;
+const app = express();
+app.use(bodyParser.json());
+
+// todo.json file 
+const filePath = path.join(__dirname,"todos.json");
+
+// unique id generator
+function uniqueIdGenerator(){
+  const currentTime = new Date().getTime();
+  const id = `${currentTime}${(Math.floor(Math.random()*10000))}`
+  return id;
+}
+
+// JSON file reader
+function jsonReader(){
+  return new Promise((resolve) => {
+    fs.readFile(filePath,"utf-8",(error,data)=>{
+      if(error){
+        resolve({"isData": 0,"error":error});
+      }
+      else{
+        // convert the data into JSON 
+        try {
+          const fileData = JSON.parse(data);
+          resolve({"isData": 1,"data":fileData});
+        } catch (error) {
+          resolve({"isData": 0,"error":"Server error"});
+        }
+      }
+    })
+  })
+}
+
+// JSON function writer
+function jsonWriter(data){
+  return new Promise((resolve)=>{
+    fs.writeFile(filePath,JSON.stringify(data), "utf-8",(error)=>{
+      if(error){
+        resolve({"status":500,"error":"Server error"});
+      }
+      else{
+        resolve({"status":201});
+      }
+    })
+  })
+}
+
+
+// todo finder with id
+async function todoFinder(id){
+  const fileData = await jsonReader();
+  // checks if the data present or not
+  if(fileData.isData){
+    const todoArray = fileData.data;
+    const todoArrayLength = todoArray.length;
+
+    // checks for the id in the array
+    let todoIndex = -1;
+    for(let i =0; i<todoArrayLength;i++){
+      if(id == todoArray[i].id){
+        todoIndex = i;
+        return {"status": 200,"todoIndex":todoIndex, "todoData": todoArray[i], "todoArray":todoArray}
+      }
+    }
+    return({"status":404, "error":"Not found"})
+  }else{
+    return ({"status":500,"error":"Server error"})
+  }
+}
+
+// Get /todos - Reterive all the todos
+app.get("/todos",async(req,res)=>{
+  const fileData = await jsonReader();
+  if(fileData.isData){
+    await todoFinder();
+    res.status(200).json(fileData.data);
+  }else{
+    res.status(500).send(fileData.error)
+  }
+})
+
+// Get /todos/:id - Retrieve a specific todo item by ID
+app.get("/todos/:id",async(req,res)=>{
+  const id = req.params.id;
+  const todoInfo = await todoFinder(id);
+  if(todoInfo.status==200){
+    res.status(todoInfo.status).json(todoInfo.todoData);
+  }
+  else{
+    res.status(todoInfo.status).json(todoInfo.error);
+  }
+})
+
+// POST /todos - Create a new todo item
+app.post("/todos",async(req,res)=>{
+  const {title, completed,description} = req.body;
+  const id = uniqueIdGenerator();
+  const fileData = await jsonReader();
+
+  // check validity
+  if(fileData.isData){
+    fileData.data.push({id,title,completed,description});
+    const isDone = await jsonWriter(fileData.data);
+    if(isDone.status == 201){
+      res.status(201).send("All set")
+    }else{
+      res.status(500).json({"error":isDone.error});
+    }
+  }
+  else{
+    res.status(500).json({"error":fileData.error})
+  }
+})
+
+// PUT /todos/:id - Update an existing todo item by ID
+app.put("/todos/:id", async(req,res)=>{
+  const id = req.params.id;
+  const {title, completed} = req.body;
   
-  const app = express();
+  // check for the task
+  const isPresent = await todoFinder(id);
+  if(isPresent.status == 200){
+    const todoIndex = isPresent.todoIndex;
+    const todoArray = isPresent.todoArray;
+    
+    todoArray[todoIndex].title = title;
+    todoArray[todoIndex].completed = completed;
+    const isUpdated = await jsonWriter(todoArray);
+    if(isUpdated.status == 201){
+      res.status(201).send("All set");
+    }
+    else{
+      res.status(500).json({"error":"Server error"});
+    }
+
+  }
+  else if(isPresent.status==404){
+    res.status(404).json({"error":"Not found"})
+  }
+  else{
+    res.status(500).json({"error":"Server error"});
+  }
   
-  app.use(bodyParser.json());
-  
-  module.exports = app;
+})
+
+async function deleteTodo(id){
+  const todoInfo = await todoFinder(id);
+  if(todoInfo.status == 404){
+    return ({"status":todoInfo.status, "error":todoInfo.error})
+  }else{
+    todoInfo.todoArray.splice(todoInfo.todoIndex,1);
+    const isDone = await jsonWriter(todoInfo.todoArray);
+    return ({"status":isDone});
+  }
+}
+
+
+// DELETE /todos/:id - Delete a todo item by ID
+app.delete("/todos/:id",async(req,res)=>{
+  const id = req.params.id;
+  const isDone = await deleteTodo(id);  
+  if(isDone.status==404){
+    res.status(isDone.status).send(isDone.error);
+  }else{
+    res.status(200).send("All set");
+  }
+})
+
+app.get("*",(req,res)=>{
+  res.status(404).send("Route not defined");
+})
+
+// app.listen(port,()=>{
+//   console.log("Server started!!!");
+// })
+
+module.exports = app;
