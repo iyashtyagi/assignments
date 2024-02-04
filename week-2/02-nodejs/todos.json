@@ -1,1 +1,23 @@
-[{"id":"1707047040731850","title":"New Todo","description":"A new todo item"},{"id":"17070471194616059","title":"New Todo","description":"A new todo item"},{"id":"17070474230407617","title":"New Todo","description":"A new todo item"}]
+[
+    {"id": 1, "title": "Buy groceries", "completed": false, "description": "I should buy groceries"},
+    {"id": 2, "title": "Complete work assignment", "completed": true, "description": "Finish the project by the deadline"},
+    {"id": 3, "title": "Exercise", "completed": false, "description": "Go for a jog in the park"},
+    {"id": 4, "title": "Read a book", "completed": false, "description": "Start a new novel"},
+    {"id": 5, "title": "Learn a new skill", "completed": false, "description": "Explore programming languages"},
+    {"id": 6, "title": "Plan weekend activities", "completed": false, "description": "Make plans for the weekend"},
+    {"id": 7, "title": "Write in journal", "completed": false, "description": "Document thoughts and experiences"},
+    {"id": 8, "title": "Call a friend", "completed": false, "description": "Catch up with an old friend"},
+    {"id": 9, "title": "Watch a movie", "completed": false, "description": "Pick a movie and relax"},
+    {"id": 10, "title": "Cook a new recipe", "completed": false, "description": "Try a new dish for dinner"},
+    {"id": 11, "title": "Visit a museum", "completed": false, "description": "Explore local art and history"},
+    {"id": 12, "title": "Go for a hike", "completed": false, "description": "Enjoy nature and the outdoors"},
+    {"id": 13, "title": "Learn to play a musical instrument", "completed": false, "description": "Pick up a guitar or keyboard"},
+    {"id": 14, "title": "Start a blog", "completed": false, "description": "Share thoughts and experiences online"},
+    {"id": 15, "title": "Volunteer for a cause", "completed": false, "description": "Contribute to the community"},
+    {"id": 16, "title": "Visit a new restaurant", "completed": false, "description": "Try different cuisines"},
+    {"id": 17, "title": "Take a photography walk", "completed": false, "description": "Capture interesting moments"},
+    {"id": 18, "title": "Attend a workshop", "completed": false, "description": "Learn new skills from experts"},
+    {"id": 19, "title": "Organize workspace", "completed": false, "description": "Declutter and organize the work area"},
+    {"id": 20, "title": "Plan a vacation", "completed": false, "description": "Research and plan a future trip"}
+  ]
+  
