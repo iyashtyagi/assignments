@@ -29,14 +29,12 @@ router.post('/courses/:courseId', userMiddleware, async (req, res) => {
     const {courseId} = req.params;
     const {username} = req.headers;
     const user = await User.findOne({username});
-    console.log(user);
     await User.updateOne({username},{
         "$push" : {
             "purchasedCourse" : courseId
         }
     })
-    const user2 = await User.findOne({username});
-    console.log(user2);
+    res.status(201).json({ message: 'Course purchased successfully' })
 });
 
 router.get('/purchasedCourses', userMiddleware, async (req, res) => {
