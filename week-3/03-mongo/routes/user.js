@@ -28,7 +28,6 @@ router.get('/courses',userMiddleware ,async (req, res) => {
 router.post('/courses/:courseId', userMiddleware, async (req, res) => {
     const {courseId} = req.params;
     const {username} = req.headers;
-    const user = await User.findOne({username});
     await User.updateOne({username},{
         "$push" : {
             "purchasedCourse" : courseId
