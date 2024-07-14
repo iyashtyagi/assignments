@@ -7,13 +7,17 @@ export function Assignment1() {
     const [input, setInput] = useState(0);
     // Your solution starts here
     function factorial(n){
+        if(n<1 || n>170){
+            return "Meh";
+        }
         if(n == 1){
             return 1;
         }
-        return n*n-1;
+        return n*factorial(n-1);
     }
     const expensiveValue = useMemo(()=>{
-        factorial(input);
+        const fac =  factorial(input);
+        return fac;
     },[input]); 
     // Your solution ends here
 
@@ -22,9 +26,12 @@ export function Assignment1() {
             <input 
                 type="number" 
                 value={input} 
-                onChange={(e) => setInput(Number(e.target.value))} 
+                onChange={(e) => {
+                    setInput(Number(e.target.value));
+                }
+                } 
             />
-            <p>Calculated Value: {expensiveValue}</p>
+            <p>Calculated Value: <b>{expensiveValue}</b></p>
         </div>
     );
 }
